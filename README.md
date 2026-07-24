@@ -35,16 +35,16 @@ graph TD
       Macros --> create_raw_table.sql
       
     Root --> Model[models/]
-      Model --> Silver[models/staging/]
-        Silver --> Airbnb[models/staging/airbnb/]
-          Airbnb --> stg_airbnb__listings.sql
-          Airbnb --> stg_airbnb__reviews.sql
-          Airbnb --> stg_airbnb__calendar.sql
-          Airbnb --> stg_airbnb__listing_amenities.sql
+      Model --> Staging[models/staging/]
+        Staging --> Silver[models/staging/airbnb/]
+          Silver --> stg_airbnb__listings.sql
+          Silver --> stg_airbnb__reviews.sql
+          Silver --> stg_airbnb__calendar.sql
+          Silver --> stg_airbnb__listing_amenities.sql
           
-      Model --> Gold[models/marts/]
-        Gold --> Airbnb[models/marts/airbnb/]
-          Airbnb --> dim_listings.sql
+      Model --> Marts[models/marts/]
+        Marts --> Gold[models/marts/airbnb/]
+          Gold --> dim_listings.sql
     
     Root --> Reports[reports/]
     Root --> dbt_project.yml
