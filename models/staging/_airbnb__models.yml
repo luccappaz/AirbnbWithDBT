@@ -1,0 +1,90 @@
+version: 2
+
+models:
+  - name: stg_airbnb__listing_amenities
+    description: "Tabela de relacionamento 1:N contendo todas as comodidades (amenities) de cada anúncio."
+    columns:
+      - name: listing_id
+        description: "Chave estrangeira apontando para o imóvel"
+        tests:
+          - not_null
+      - name: amenity_name
+        description: "Nome da comodidade (ex: Wifi, Pool, Air conditioning)"
+        tests:
+          - not_null
+
+  - name: stg_airbnb__reviews
+    description: "Tabela de staging das avaliações dos anúncios do Airbnb"
+    columns:
+      - name: review_id
+        description: "ID único da avaliação"
+        tests:
+          - not_null
+          - unique
+      - name: listing_id
+        description: "Chave estrangeira apontando para o imóvel"
+        tests:
+          - not_null
+      - name: reviewer_id
+        description: "ID único do usuário que fez a avaliação"
+        tests:
+          - not_null
+
+  - name: stg_airbnb__listings
+    description: "Tabela de staging sanitizada dos anúncios do Airbnb"
+    columns:
+      - name: id
+        description: "ID único do imóvel"
+        tests:
+          - unique
+          - not_null
+
+      - name: room_type
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Entire home/apt', 'Private room', 'Shared room', 'Hotel room']
+
+      - name: price
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+              config:
+                severity: warn  # Caso exista um outlier, emite apenas aviso em vez de parar o pipeline
+
+      - name: accommodates
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+
+      - name: review_scores_rating
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 0 and 5"
+
+      - name: availability_365
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 0 and 365"
+
+      - name: availability_90
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 0 and 90"
+
+      - name: availability_60
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 0 and 60"
+
+      - name: availability_30
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "between 0 and 30"

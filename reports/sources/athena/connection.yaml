@@ -1,0 +1,8 @@
+name: athena
+type: athena
+options:
+  catalog: awsdatacatalog
+  database: lucca_gold
+  workgroup: primary
+  outputBucket: airbnb-lucca/athena-results/
+  testTableName: dim_listings

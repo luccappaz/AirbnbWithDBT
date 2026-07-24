@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: dim_listings
+    description: "Dimensão principal de anúncios para o Dashboard."
+    columns:
+      - name: neighbourhood
+        description: "Bairro do imóvel (Filtro principal e Top 10 Bairros)."
+        tests:
+          - not_null # Evita aparecer uma barra solta "(Blank)" no gráfico de bairros
+
+      - name: room_type
+        description: "Tipo de acomodação (Gráfico de Pizza)."
+        tests:
+          - not_null
+          - accepted_values: # Garante legenda limpa no gráfico de pizza
+              arguments:
+                values: ['Entire home/apt', 'Private room', 'Shared room', 'Hotel room']
+
+      - name: price
+        description: "Valor da diária (KPI de Preço Médio e Faturamento)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0" # Evita diárias zeradas ou negativas sujando a média
+
+      - name: latitude
+        description: "Coordenadas para o Mapa de Calor."
+        tests:
+          - not_null # Garante que todo imóvel apareça no mapa do BI
+      - name: longitude
+        tests:
+          - not_null
+
+  - name: neighbourhood_performance
+    description: "Tabela agregada para a Tela 2 (Análise por Bairro)."
+    columns:
+      - name: neighbourhood
+        tests:
+          - not_null
+      - name: avg_price
+        description: "Média de preço por bairro."
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+      - name: total_listings
+        description: "Volume de imóveis agrupados."
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"

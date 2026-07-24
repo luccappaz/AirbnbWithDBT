@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: airbnb
+    database: awsdatacatalog
+    schema: bronze
+    description: "Dados brutos do Airbnb armazenados no S3/Athena na camada Bronze."
+    tables:
+      - name: raw_listings
+      - name: raw_reviews
+      - name: raw_calendar
