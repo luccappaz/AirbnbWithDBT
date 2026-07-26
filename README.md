@@ -16,7 +16,9 @@ An end-to-end analytics platform that transforms Airbnb listings into a modern d
 
 ## Demo
 
-![Dashboard Demo](assets/dashboard-demo.png)
+![Price Distribution](assets/price_distribution.png)
+![Correlation](assets/correlation.png)
+![Neighbourhood Distribution](assets/neighbourhood_dist.png)
 ---
 
 ## About
