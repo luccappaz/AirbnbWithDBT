@@ -118,87 +118,48 @@ Evidence.dev generates static pages that are deployed on Vercel while still supp
 
 ## Project Structure
 
-```mermaid
-graph TD
-    Root[airbnb/]
-    
-    Root --> Analyses[analyses/]
-      Analyses --> finding_empty_raw_columns.sql 
-      
-    Root --> Macros[macros/]
-      Macros --> create_database.sql
-      Macros --> create_raw_table.sql
-      
-    Root --> Model[models/]
-      Model --> Staging[models/staging/]
-        Staging --> Silver[models/staging/airbnb/]
-          Silver --> stg_airbnb__listings.sql
-          Silver --> stg_airbnb__reviews.sql
-          Silver --> stg_airbnb__calendar.sql
-          Silver --> stg_airbnb__listing_amenities.sql
-          
-      Model --> Marts[models/marts/]
-        Marts --> Gold[models/marts/airbnb/]
-          Gold --> dim_listings.sql
-    
-    Root --> Reports[reports/]
-    Root --> dbt_project.yml
-    Root --> package.yml
-    Root --> README.md
-
-    subgraph Reports
-            Pages[reports/pages] --> index.md[pages/index.md] 
-            Sources[reports/sources] --> Athena[sources/athena]
-            Athena --> Connection[athena/connection.yaml]
-            Athena --> NeighbourhoodPrices[athena/neighbourhood_prices.sql]
-        end
-
+```text
+airbnb/
+│
+├── models/
+│   ├── staging/     → Silver Layer
+│   └── marts/       → Gold Layer
+│
+├── analyses/        → Data Quality Checks
+├── macros/          → Reusable SQL
+│
+├── reports/         → Evidence.dev Dashboard
+│   ├── pages/
+│   └── sources/
+│
+├── dbt_project.yml
+├── package.yml
+└── README.md
 ```
 ### Data Pipeline
- ```mermaid
+```mermaid
  flowchart LR
-     %% Fontes de Origem
-     subgraph Sources[" 📥 Fonte de Dados "]
-         A["Inside Airbnb - SP<br/>(CSVs de Anúncios e Diárias)"]
-     end
- 
-     %% Arquitetura Medalhão na AWS
-     subgraph Medallion[" 🏅 Arquitetura Medalhão (AWS) "]
-         Bronze["🥉 Bronze Layer (S3 Raw)<br/>Arquivos CSV/Parquet Brutos"]
-         Silver["🥈 Silver Layer (dbt / Athena)<br/>Tratamento de Preços, Nulos e Tipagem"]
-         Gold["🥇 Gold Layer (lucca_gold)<br/>dim_listings / fct_listings_daily/ neighbourhood_perfomance"]
-     end
- 
-     %% Processamento Local do Evidence
-     subgraph EvidenceEngine[" ⚡ Camada do Evidence.dev "]
-         AthenaQueries["sources/athena/*.sql<br/>Queries Selecionadas e Filtradas"]
-         DuckDB["Cache Local (DuckDB)<br/>npm run sources"]
-     end
- 
-     %% Consumo & Hospedagem
-     subgraph Destinations[" 📊 Consumo & Publicação "]
-         Dashboard["Dashboard Interativo (index.md)<br/>BigValues, BarChart, Hist, ScatterPlot"]
-         Deploy["Deploy Estático (SSG)<br/>Vercel / Netlify"]
-     end
- 
-     %% Fluxo de Dados
-     Sources -->|Ingestão S3| Bronze
-     Bronze -->|Limpeza & Regex de Cifrão| Silver
-     Silver -->|Modelagem Dimensional| Gold
-     Gold -->|Execução de Queries| AthenaQueries
-     AthenaQueries -->|Download mínimo de colunas| DuckDB
-     DuckDB -->|Alimenta Gráficos Localmente| Dashboard
-     Dashboard -->|npm run build| Deploy
- 
-     %% Estilização das Camadas
-     style Bronze fill:#cd7f32,stroke:#663300,stroke-width:2px,color:#fff
-     style Silver fill:#c0c0c0,stroke:#4a4a4a,stroke-width:2px,color:#000
-     style Gold fill:#ffd700,stroke:#8b6508,stroke-width:2px,color:#000
-     style DuckDB fill:#fff7d6,stroke:#d9a700,stroke-width:2px,color:#000
-     style Dashboard fill:#e6f0ff,stroke:#2563eb,stroke-width:2px,color:#000
-     style Deploy fill:#111827,stroke:#374151,stroke-width:2px,color:#fff
-     
- ```
+    A[Inside Airbnb Dataset<br/>Raw CSV Files]
+    
+    B[Bronze Layer<br/>AWS S3<br/>Raw Data]
+    
+    C[Silver Layer<br/>dbt + Athena<br/>Cleaning & Data Quality]
+    
+    D[Gold Layer<br/>Dimensional Models<br/>Analytics Ready]
+    
+    E[Evidence.dev<br/>Athena Queries + DuckDB Cache]
+    
+    F[Interactive Dashboard<br/>Charts & KPIs]
+    
+    G[Vercel Deployment<br/>Static Website]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+```
 ## Quick Start
 
 ### Prerequisites
@@ -259,24 +220,6 @@ npm run build
 
 npm run preview
 ```
-
----
-
-## Dashboard
-
-### Home
-
-(screenshot)
-
-### Price Distribution
-
-(screenshot)
-
-### Neighborhood Analysis
-
-(screenshot)
-
----
 
 ## Dataset
 
