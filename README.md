@@ -1,27 +1,118 @@
-# Projeto Airbnb usando DataBuildTool (DBT) e deploy na Vercel 
+# 🏡 Airbnb Analytics Platform
 
-O objetivo é analisar os preços de diárias dos imóveis listados no Airbnb, explorando a distribuição de preços, a correlação entre preço e nota de avaliação, e a distribuição por bairro.
+### Data Lakehouse + dbt + Athena + Evidence.dev + Vercel
 
-## 📌 Sobre o Projeto
+An end-to-end analytics platform that transforms Airbnb listings into a modern data warehouse and interactive dashboard using AWS, dbt, and BI-as-code.
 
-Este projeto consiste em uma **pipeline de dados end-to-end** e um **dashboard analítico interativo** para análise do mercado imobiliário do Airbnb na cidade de São Paulo.
+![Python](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white)
+![dbt](https://img.shields.io/badge/dbt-Analytics%20Engineering-FF694B?logo=dbt&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-Athena%20%7C%20Glue%20%7C%20S3-232F3E?logo=amazonaws&logoColor=white)
+![DuckDB](https://img.shields.io/badge/DuckDB-Analytics-FFF000?logo=duckdb&logoColor=black)
+![Evidence](https://img.shields.io/badge/Evidence.dev-BI--as--Code-6E56CF)
+![Vercel](https://img.shields.io/badge/Vercel-Deployment-000000?logo=vercel&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-O objetivo principal é extrair insights sobre preços, distribuição geográfica e avaliações dos imóveis, aplicando boas práticas de Engenharia de Dados: **Arquitetura Medalhão**, modelagem dimensional no **dbt**, e visualização de dados via **BI-as-code** com **Evidence.dev**.
+![AirbnbLayout](assets/AirbnbLayout.png)
+---
 
-### 🛠️ Diferenciais Técnicos da Arquitetura:
-* **Arquitetura Medalhão (Bronze/Silver/Gold):** Organização clara entre dados brutos (S3), limpos/tipados e agregados prontos para análise (`lucca_gold`).
-* **Modelagem e Qualidade com dbt:** Tratamento de tipos de dados, limpeza de caracteres especiais na coluna de preço e testes de integridade.
-* **Leitura Eficiente com DuckDB Local:** O Evidence consulta a camada Gold no Athena e gera um cache local em DuckDB (`npm run sources`), garantindo performance de milissegundos no dashboard e redução drástica de custos na AWS.
-* **Deploy Estático (SSG):** Geração de páginas estáticas hospedadas na Vercel com suporte a componentes interativos (`BigValue`, `Hist`, `ScatterPlot`, `Dropdown`).
+## About
 
-### 💻 Tech Stack
+This project builds a complete analytics pipeline for Airbnb listings in São Paulo.
 
-* **Armazenamento & Consulta:** AWS S3, AWS Glue Data Catalog, AWS Athena
-* **Transformação & Modelagem:** dbt (`dbt-athena-community`), SQL
-* **Camada de Analytics & BI:** Evidence.dev, DuckDB, Svelte
-* **CI/CD & Deploy:** Vercel / Netlify
+Raw datasets are stored in Amazon S3, transformed with dbt following the Medallion Architecture, queried through Amazon Athena, and visualized using Evidence.dev. The final dashboard is deployed as a static website on Vercel.
 
-## 📊 Estrutura do Projeto
+---
+
+## Motivation
+
+Understanding Airbnb pricing trends requires more than simply querying raw CSV files.
+
+This project demonstrates how modern Data Engineering practices can be applied to build a scalable analytics platform by combining:
+
+- Medallion Architecture
+- Dimensional Modeling
+- Data Quality with dbt
+- Serverless Analytics with Athena
+- BI-as-Code with Evidence.dev
+
+The final result is an interactive dashboard capable of exploring prices, neighborhoods, and review scores with low latency and minimal cloud costs.
+
+---
+
+## Features
+
+- End-to-end analytics pipeline
+- Medallion Architecture (Bronze, Silver, Gold)
+- Data modeling with dbt
+- Data quality tests
+- Amazon Athena integration
+- DuckDB local caching
+- Interactive dashboard with Evidence.dev
+- Static deployment on Vercel
+- BI-as-Code approach
+
+---
+
+## Technical Highlights
+
+### 🏅 Medallion Architecture
+
+The project follows the Medallion Architecture:
+
+- **Bronze:** raw CSV/Parquet files stored in Amazon S3.
+- **Silver:** cleaned and standardized datasets with proper data types.
+- **Gold:** dimensional models optimized for business analytics.
+
+### 🔧 Data Modeling with dbt
+
+dbt is responsible for:
+
+- Cleaning price values
+- Removing special characters
+- Data type enforcement
+- Integrity tests
+- Dimensional modeling
+
+### ⚡ Efficient Queries with DuckDB
+
+Evidence.dev queries Amazon Athena only once to retrieve aggregated datasets.
+
+The data is cached locally in DuckDB using:
+
+```bash
+npm run sources
+```
+
+This dramatically reduces AWS query costs while allowing millisecond dashboard performance.
+
+### 🌐 Static Deployment
+
+Evidence.dev generates static pages that are deployed on Vercel while still supporting interactive components such as:
+
+- BigValue
+- Histograms
+- Scatter Plots
+- Dropdown Filters
+
+---
+
+## Technology Stack
+
+| Technology | Purpose |
+|------------|----------|
+| Amazon S3 | Raw data storage |
+| AWS Glue Data Catalog | Metadata catalog |
+| Amazon Athena | Serverless SQL engine |
+| dbt (dbt-athena-community) | Data transformation |
+| SQL | Data modeling |
+| DuckDB | Local analytical cache |
+| Evidence.dev | BI-as-Code dashboard |
+| Svelte | Frontend framework |
+| Vercel | Static deployment |
+
+---
+
+## Project Structure
 
 ```mermaid
 graph TD
@@ -59,7 +150,7 @@ graph TD
         end
 
 ```
-### O projeto segue a arquitetura de dados em camadas, com as seguintes etapas:
+### Data Pipeline
  ```mermaid
  flowchart LR
      %% Fontes de Origem
@@ -104,63 +195,111 @@ graph TD
      style Deploy fill:#111827,stroke:#374151,stroke-width:2px,color:#fff
      
  ```
-## Quickstart
+## Quick Start
 
-### Pré-requisitos
+### Prerequisites
 
-- Node.js: v18+
-- Python: v3.9+
-- AWS CLI: instalado e configurado
-- dbt: com o adaptador dbt-athena-community
+- Python 3.9+
+- Node.js 18+
+- AWS CLI configured
+- dbt-athena-community
 
-### Autenticação AWS
-
-Garanta que você tenha as credenciais da AWS configuradas corretamente. Você pode configurar usando o comando:
+### Configure AWS Credentials
 
 ```bash
 aws configure
 ```
 
-### Transformação de Dados com dbt-athena-community
+---
+
+### Run dbt Models
 
 ```bash
-# Criar e ativar ambiente virtual Python
 python3 -m venv .venv
+
 source .venv/bin/activate
 
-# Instalar dbt e o conector do Athena
 pip install dbt-athena-community
 
-# Instalar pacotes do dbt e executar os modelos na AWS
 dbt deps
+
 dbt run
 ```
 
-### Servidor Local do Dashboard (Evidence.dev)
+---
 
-Com os dados prontos no Athena, navegue até a pasta de relatórios para extrair os dados resumidos e subir o ambiente de desenvolvimento local:
-``` bash
-# Entrar na pasta do Evidence
-cd ./reports
+### Launch the Dashboard
 
-# Instalar dependências do Node
+```bash
+cd reports
+
 npm install
 
-# Sincronizar as fontes do Athena para o DuckDB local
 npm run sources
 
-# Iniciar o servidor de desenvolvimento
 npm run dev
 ```
-Acesse `http://localhost:3000` no seu navegador para visualizar o dashboard.
 
-### 🛠️ Teste de Build & Deploy na Vercel
-Para garantir que a compilação SSG (Static Site Generation) não quebrará na nuvem:
+Open:
+
+```
+http://localhost:3000
+```
+
+---
+
+### Production Build
 
 ```bash
 npm run build
+
 npm run preview
 ```
-## 📜 Licença
 
-Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+---
+
+## Dashboard
+
+### Home
+
+(screenshot)
+
+### Price Distribution
+
+(screenshot)
+
+### Neighborhood Analysis
+
+(screenshot)
+
+---
+
+## Dataset
+
+This project uses the São Paulo Airbnb dataset provided by Inside Airbnb.
+
+https://insideairbnb.com/
+
+---
+
+## Roadmap
+
+- [x] Bronze layer
+- [x] Silver transformations
+- [x] Gold dimensional models
+- [x] dbt data quality tests
+- [x] Athena integration
+- [x] DuckDB local cache
+- [x] Evidence.dev dashboard
+- [x] Vercel deployment
+- [ ] Incremental dbt models
+- [ ] CI/CD with GitHub Actions
+- [ ] Dockerized local environment
+- [ ] Scheduled dbt jobs
+- [ ] Dashboard authentication
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

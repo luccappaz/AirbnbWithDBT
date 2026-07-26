@@ -13,6 +13,7 @@ order by neighbourhood asc
     name=bairro_selecionado
     data={lista_bairros}
     value=neighbourhood
+     defaultValue="Todos"
     title="Filtrar por Bairro:"
 />
 
