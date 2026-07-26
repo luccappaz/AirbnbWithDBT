@@ -106,12 +106,13 @@ limit 10
     y=total_anuncios 
     title="Top 10 Bairros com Mais Anúncios"
     showAllAxisLabels=true
+    format="currency"
 />
 
 <DataTable data={top_bairros} search=true pagination=true>
     <Column id=bairro title="Bairro" />
     <Column id=total_anuncios title="Total Imóveis" />
-    <Column id=preco_medio title="Média de Preço" fmt=currency-brl />
+    <Column id=preco_medio title="Média de Preço" fmt="BRL" />
 </DataTable>
 
 ---
