@@ -13,6 +13,10 @@ An end-to-end analytics platform that transforms Airbnb listings into a modern d
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ![AirbnbLayout](assets/AirbnbLayout.png)
+
+## Demo
+
+![Dashboard Demo](assets/dashboard-demo.png)
 ---
 
 ## About
